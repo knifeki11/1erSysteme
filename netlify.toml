@@ -1,7 +1,9 @@
-# Next.js: do NOT set publish — Netlify's plugin sets it automatically.
-# (publish = ".next" was wrong — that's the build cache, not the served app.)
+# Publish must be a subdirectory (not repo root) or plugin fails with:
+# "Your publish directory cannot be the same as the base directory"
+# Plugin uses .next and transforms it for deployment.
 [build]
   command = "npm run build"
+  publish = ".next"
 
 [build.environment]
   NODE_VERSION = "20"
