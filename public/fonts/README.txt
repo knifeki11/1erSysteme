@@ -1,0 +1,1 @@
+Add a .woff2 font file here (e.g. Inter.woff2, Lora-Italic.woff2) and set the detail card Text component's font prop to "/fonts/YourFont.woff2" in SolutionsRing3D.tsx to change the card description font.
