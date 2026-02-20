@@ -3,6 +3,7 @@ import type { en } from "./en"
 export const fr: typeof en = {
   // Header
   nav: {
+    menu: "Menu",
     home: "Accueil",
     solutions: "Solutions",
     services: "Services",

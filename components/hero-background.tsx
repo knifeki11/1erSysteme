@@ -56,8 +56,8 @@ export function HeroBackground() {
         }}
         aria-hidden
       />
-      {/* Shift scene right so 3D blocks don't overlap left-aligned hero text */}
-      <div className="absolute inset-0 z-[1] h-full w-full" style={{ transform: "translateX(15%)" }}>
+      {/* Shift scene right so 3D blocks don't overlap left-aligned hero text. pointer-events-none so scroll/touch pass through. */}
+      <div className="pointer-events-none absolute inset-0 z-[1] h-full w-full" style={{ transform: "translateX(15%)" }}>
         <Spline
           scene={HERO_SCENE}
           className="absolute inset-0 h-full w-full min-h-full min-w-full"

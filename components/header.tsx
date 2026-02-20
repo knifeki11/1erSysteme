@@ -4,10 +4,15 @@ import { useState, useEffect, useRef, useCallback } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Sun, Moon, Globe, ChevronDown } from "lucide-react"
+import { Sun, Moon, Globe, ChevronDown, Menu } from "lucide-react"
 import { useI18n, type Locale } from "@/lib/i18n-context"
 import { useTheme } from "@/lib/theme-context"
 import { SOLUTIONS_RING_ORDER } from "@/components/solutions/solutions-ring-data"
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+} from "@/components/ui/sheet"
 
 function solutionSlug(name: string): string {
   return name.toLowerCase().replace(/\s+/g, "")
@@ -20,6 +25,7 @@ export function Header() {
   const [inverted, setInverted] = useState(false)
   const [langOpen, setLangOpen] = useState(false)
   const [solutionsOpen, setSolutionsOpen] = useState(false)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [scrollOffset, setScrollOffset] = useState(0)
   const langRef = useRef<HTMLDivElement>(null)
   const solutionsRef = useRef<HTMLDivElement>(null)
@@ -130,10 +136,10 @@ export function Header() {
         </Link>
       )}
 
-      {/* Vertical brand on left edge — hidden on team pages (/MYT/...) */}
+      {/* Vertical brand on left edge — hidden on team pages (/MYT/...) and on mobile */}
       {!isMytPage && (
         <div
-          className="fixed top-0 z-50 flex h-screen flex-col items-center"
+          className="fixed top-0 z-50 hidden h-screen flex-col items-center md:flex"
           style={{
             left: locale === "ar" ? "auto" : "0",
             right: locale === "ar" ? "0" : "auto",
@@ -193,7 +199,7 @@ export function Header() {
       />
 
       <nav
-        className="font-hero fixed top-0 z-50 flex items-center gap-1 px-4 py-5 transition-[transform,opacity] duration-300 sm:gap-3 sm:px-6 lg:gap-5 lg:px-8"
+        className="font-hero fixed top-0 z-50 flex items-center justify-end gap-1 px-4 py-5 transition-[transform,opacity] duration-300 sm:gap-3 sm:px-6 lg:gap-5 lg:px-8"
         style={{
           right: locale === "ar" ? "auto" : "0",
           left: locale === "ar" ? "0" : "auto",
@@ -202,6 +208,86 @@ export function Header() {
           pointerEvents: isHidden ? "none" : "auto",
         }}
       >
+        {/* Mobile: hamburger opens sheet with full nav */}
+        <div className="flex md:hidden">
+          <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+            <SheetTrigger
+              asChild
+              className="flex h-10 w-10 items-center justify-center rounded-lg transition-colors hover:bg-black/5 dark:hover:bg-white/5"
+              style={{ color: inverted ? "#fff" : undefined }}
+              aria-label={t.nav.menu}
+            >
+              <button type="button">
+                <Menu className="h-6 w-6" />
+              </button>
+            </SheetTrigger>
+            <SheetContent
+              side={locale === "ar" ? "left" : "right"}
+              className="flex w-[min(85vw,320px)] flex-col gap-6 pt-14 font-hero"
+              closeButtonClassName={locale === "ar" ? "left-4 right-auto" : ""}
+            >
+              <div className="flex flex-col gap-1">
+                {navItems.map((item) => {
+                  if (item.href === "/solutions") {
+                    return (
+                      <Link
+                        key={item.href}
+                        href="/solutions"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="rounded-lg px-3 py-2.5 text-sm font-medium text-foreground hover:bg-muted"
+                      >
+                        {item.label}
+                      </Link>
+                    )
+                  }
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="rounded-lg px-3 py-2.5 text-sm font-medium text-foreground hover:bg-muted"
+                    >
+                      {item.label}
+                    </Link>
+                  )
+                })}
+              </div>
+              <div className="mt-auto flex flex-col gap-2 border-t pt-4">
+                <button
+                  type="button"
+                  onClick={toggleTheme}
+                  className="flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-foreground hover:bg-muted"
+                  aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+                >
+                  {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+                  {theme === "dark" ? "Light mode" : "Dark mode"}
+                </button>
+                <div className="flex items-center gap-2 rounded-lg px-3 py-2.5">
+                  <Globe className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm font-medium text-foreground">{locale.toUpperCase()}</span>
+                  <div className="flex gap-1">
+                    {(["en", "fr", "ar"] as Locale[]).map((l) => (
+                      <button
+                        key={l}
+                        type="button"
+                        onClick={() => {
+                          setLocale(l)
+                          setMobileMenuOpen(false)
+                        }}
+                        className={`rounded px-2 py-1 text-xs ${locale === l ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-muted"}`}
+                      >
+                        {l === "en" ? "EN" : l === "fr" ? "FR" : "AR"}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </SheetContent>
+          </Sheet>
+        </div>
+
+        {/* Desktop: full nav bar */}
+        <div className="hidden items-center gap-1 sm:gap-3 lg:gap-5 md:flex">
         {navItems.map((item) => {
           const isSolutions = item.href === "/solutions"
           if (isSolutions) {
@@ -348,7 +434,7 @@ export function Header() {
             </div>
           )}
         </div>
-
+        </div>
       </nav>
     </>
   )

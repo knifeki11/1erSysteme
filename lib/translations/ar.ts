@@ -3,6 +3,7 @@ import type { en } from "./en"
 export const ar: typeof en = {
   // Header
   nav: {
+    menu: "\u0627\u0644\u0642\u0627\u0626\u0645\u0629",
     home: "\u0627\u0644\u0631\u0626\u064a\u0633\u064a\u0629",
     solutions: "\u0627\u0644\u062d\u0644\u0648\u0644",
     services: "\u0627\u0644\u062e\u062f\u0645\u0627\u062a",

@@ -1,6 +1,7 @@
 export const en = {
   // Header
   nav: {
+    menu: "Menu",
     home: "Home",
     solutions: "Solutions",
     services: "Services",
