@@ -45,22 +45,22 @@ export function About() {
     <section id="about" className="section-ornament section-ornament--right relative bg-background py-24 sm:py-32">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         {/* About intro */}
-        <div className="max-w-4xl">
+        <div className="max-w-4xl min-w-0">
           <p className="text-sm font-medium uppercase tracking-widest text-muted-foreground">
             {t.about.label}
           </p>
-          <h2 className="font-hero mt-4 text-[clamp(2.5rem,5vw,4.5rem)] font-bold leading-[1.1] tracking-tight text-foreground">
+          <h2 className="font-hero mt-4 break-words text-[clamp(2.5rem,5vw,4.5rem)] font-bold leading-[1.1] tracking-tight text-foreground">
             {t.aboutIntro.staticText}{" "}
             <span
-              className="relative inline-block h-[1.1em] align-baseline"
-              style={{ minWidth: `${maxPhraseLength}ch` }}
+              className="relative inline-block h-[1.1em] max-w-full min-w-0 align-baseline md:min-w-[var(--phrase-min-width)]"
+              style={{ ["--phrase-min-width" as string]: `${maxPhraseLength}ch` } as React.CSSProperties}
               aria-live="polite"
               aria-atomic="true"
             >
               {rotatingPhrases.map((phrase, index) => (
                 <span
                   key={phrase}
-                  className={`absolute left-0 top-0 transition-all duration-500 ease-out ${
+                  className={`absolute left-0 top-0 max-w-full break-words transition-all duration-500 ease-out ${
                     index === activeIndex
                       ? "translate-y-0 opacity-100"
                       : "translate-y-2 opacity-0"
@@ -71,7 +71,7 @@ export function About() {
               ))}
             </span>
           </h2>
-          <p className="font-hero mt-6 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">
+          <p className="font-hero mt-6 max-w-2xl min-w-0 break-words text-sm leading-relaxed text-muted-foreground sm:text-base">
             {t.about.description}
           </p>
         </div>

@@ -102,9 +102,10 @@ export function Header() {
     { label: t.nav.contact, href: "/contact" },
   ]
 
-  const textColor = inverted ? "#ffffff" : undefined
-  const mutedTextColor = inverted ? "rgba(255,255,255,0.7)" : undefined
-  const lineColor = inverted
+  const useInvertedColors = theme === "dark" && inverted
+  const textColor = useInvertedColors ? "#ffffff" : undefined
+  const mutedTextColor = useInvertedColors ? "rgba(255,255,255,0.7)" : undefined
+  const lineColor = useInvertedColors
     ? "rgba(255,255,255,0.2)"
     : theme === "dark"
       ? "rgba(255,255,255,0.2)"
@@ -169,8 +170,8 @@ export function Header() {
                   className="font-hero text-[11px] font-bold leading-none tracking-widest transition-colors duration-500"
                   style={{ color: textColor }}
                 >
-                  {!inverted && <span className="text-foreground">{char}</span>}
-                  {inverted && char}
+                  {!useInvertedColors && <span className="text-foreground">{char}</span>}
+                  {useInvertedColors && char}
                 </span>
               ))}
             </Link>
@@ -194,7 +195,9 @@ export function Header() {
           backdropFilter: "blur(1.5px)",
           WebkitBackdropFilter: "blur(1.5px)",
           background:
-            "linear-gradient(to bottom, rgba(255,255,255,0.12), rgba(255,255,255,0))",
+            theme === "dark"
+              ? "linear-gradient(to bottom, rgba(255,255,255,0.12), rgba(255,255,255,0))"
+              : "linear-gradient(to bottom, rgba(0,0,0,0.04), rgba(0,0,0,0))",
         }}
       />
 
@@ -214,7 +217,7 @@ export function Header() {
             <SheetTrigger
               asChild
               className="flex h-10 w-10 items-center justify-center rounded-lg transition-colors hover:bg-black/5 dark:hover:bg-white/5"
-              style={{ color: inverted ? "#fff" : undefined }}
+              style={{ color: useInvertedColors ? "#fff" : undefined }}
               aria-label={t.nav.menu}
             >
               <button type="button">
@@ -304,12 +307,12 @@ export function Header() {
                   className="inline-flex items-center gap-0.5 text-xs font-medium transition-colors duration-500 sm:text-sm"
                   style={{ color: mutedTextColor }}
                 >
-                  {!inverted && (
+                  {!useInvertedColors && (
                     <span className="text-muted-foreground hover:text-foreground">
                       {item.label}
                     </span>
                   )}
-                  {inverted && item.label}
+                  {useInvertedColors && item.label}
                   <ChevronDown
                     className={`h-3.5 w-3.5 sm:h-4 sm:w-4 transition-transform duration-200 ${solutionsOpen ? "rotate-180" : ""}`}
                     aria-hidden
@@ -349,12 +352,12 @@ export function Header() {
               className="text-xs font-medium transition-colors duration-500 sm:text-sm"
               style={{ color: mutedTextColor }}
             >
-              {!inverted && (
+              {!useInvertedColors && (
                 <span className="text-muted-foreground hover:text-foreground">
                   {item.label}
                 </span>
               )}
-              {inverted && item.label}
+              {useInvertedColors && item.label}
             </Link>
           )
         })}
@@ -369,7 +372,7 @@ export function Header() {
             theme === "dark" ? "Switch to light mode" : "Switch to dark mode"
           }
         >
-          {!inverted && (
+          {!useInvertedColors && (
             <span className="text-muted-foreground hover:text-foreground">
               {theme === "dark" ? (
                 <Sun className="h-4 w-4" />
@@ -378,7 +381,7 @@ export function Header() {
               )}
             </span>
           )}
-          {inverted &&
+          {useInvertedColors &&
             (theme === "dark" ? (
               <Sun className="h-4 w-4" />
             ) : (
@@ -395,13 +398,13 @@ export function Header() {
             style={{ color: mutedTextColor }}
             aria-label="Change language"
           >
-            {!inverted && (
+            {!useInvertedColors && (
               <span className="flex items-center gap-1 text-muted-foreground hover:text-foreground sm:gap-1.5">
                 <Globe className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                 {locale.toUpperCase()}
               </span>
             )}
-            {inverted && (
+            {useInvertedColors && (
               <>
                 <Globe className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                 {locale.toUpperCase()}

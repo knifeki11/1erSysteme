@@ -14,7 +14,20 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet"
-import { ArrowLeft, Check, ChevronRight } from "lucide-react"
+import {
+  ArrowLeft,
+  Check,
+  ChevronRight,
+  CreditCard,
+  DoorOpen,
+  LayoutGrid,
+  Monitor,
+  Printer,
+  ScanLine,
+  Smartphone,
+  Tag,
+  Wrench,
+} from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useI18n } from "@/lib/i18n-context"
 import { cn } from "@/lib/utils"
@@ -27,7 +40,20 @@ import {
   type SolutionItem,
   type CategoryItem,
   type ProductItem,
+  type CategoryIconKey,
 } from "./products-tabs-data"
+
+const CATEGORY_ICONS: Record<CategoryIconKey, React.ComponentType<{ className?: string }>> = {
+  "credit-card": CreditCard,
+  "door-open": DoorOpen,
+  kiosk: LayoutGrid,
+  monitor: Monitor,
+  printer: Printer,
+  scan: ScanLine,
+  smartphone: Smartphone,
+  tag: Tag,
+  wrench: Wrench,
+}
 
 type ProductsTabsLabels = {
   bySolution: string
@@ -164,13 +190,20 @@ function ProductCard({
       </span>
 
       <div className="relative flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-border/80 bg-muted/40 shadow-[0_0_12px_-2px_hsl(var(--accent)_/_0.06)] dark:border-white/10 dark:bg-white/5 dark:shadow-[0_0_14px_-2px_hsl(var(--accent)_/_0.08)]">
-        <Image
-          src={item.logoSrc}
-          alt=""
-          width={40}
-          height={40}
-          className="object-contain p-0.5"
-        />
+        {(() => {
+          const iconKey = "icon" in item ? (item as CategoryItem).icon : null
+          const Icon = iconKey ? CATEGORY_ICONS[iconKey] : null
+          if (Icon) return <Icon className="h-5 w-5 text-foreground/80 dark:text-white/80" />
+          return (
+            <Image
+              src={item.logoSrc}
+              alt=""
+              width={40}
+              height={40}
+              className="object-contain p-0.5"
+            />
+          )
+        })()}
       </div>
       <h3 className="mt-4 font-bold leading-tight text-foreground">
         {display.name}

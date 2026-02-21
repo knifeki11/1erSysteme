@@ -1474,7 +1474,7 @@ export const fr: typeof en = {
   // Footer
   footer: {
     description:
-      "Transformer les entreprises gr\u00e2ce \u00e0 des solutions technologiques innovantes. Cloud, IA, s\u00e9curit\u00e9 et au-del\u00e0.",
+      "Nous concevons, déployons et maintenons des systèmes critiques : point de vente, billetterie, contrôle d'accès, RFID, réservations et infrastructure.",
     solutionsTitle: "Solutions",
     companyTitle: "Entreprise",
     resourcesTitle: "Ressources",

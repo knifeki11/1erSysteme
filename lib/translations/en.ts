@@ -1423,7 +1423,7 @@ export const en = {
   // Footer
   footer: {
     description:
-      "Transforming enterprises through innovative technology solutions. Cloud, AI, security, and beyond.",
+      "We design, deploy and maintain critical systems: point of sale, ticketing, access control, RFID, reservations and infrastructure.",
     solutionsTitle: "Solutions",
     companyTitle: "Company",
     resourcesTitle: "Resources",

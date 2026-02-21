@@ -23,10 +23,24 @@ export type SolutionItem = {
   productIds: string[]
 }
 
+/** Icon key for category card (maps to Lucide icon in UI). */
+export type CategoryIconKey =
+  | "kiosk"
+  | "printer"
+  | "scan"
+  | "smartphone"
+  | "monitor"
+  | "credit-card"
+  | "wrench"
+  | "tag"
+  | "door-open"
+
 export type CategoryItem = {
   id: string
   name: string
   logoSrc: string
+  /** Category icon key; when set, card shows this icon instead of logoSrc */
+  icon: CategoryIconKey
   short: string
   tags: string[]
   productIds: string[]
@@ -140,15 +154,15 @@ export const SOLUTIONS: SolutionItem[] = [
 
 /** 9 categories (Borne, Imprimante, Lecteur, Mobile, Moniteur, POS, Service, Tag, Tourniquet). Use i18n for name/short/tags. */
 export const CATEGORIES: CategoryItem[] = [
-  { id: "cat-borne", name: "Borne", logoSrc: "/images/Logo.png", short: "Bornes libre-service pour tickets, accès ou information.", tags: ["Tactile", "Réseau"], productIds: ["prod-borne"] },
-  { id: "cat-imprimante", name: "Imprimante", logoSrc: "/images/Logo.png", short: "Imprimantes reçus, étiquettes et thermiques, réseau ou mobile.", tags: ["Thermique", "Réseau"], productIds: ["prod-imprimante", "prod-imprimante-mobile"] },
-  { id: "cat-lecteur", name: "Lecteur", logoSrc: "/images/Logo.png", short: "Lecteurs et scanners RFID/NFC/UHF pour badges et traçabilité.", tags: ["RFID", "UHF"], productIds: ["prod-antenne-uhf", "prod-lecteur", "prod-lecteur-uhf", "prod-scanner-uhf"] },
-  { id: "cat-mobile", name: "Mobile", logoSrc: "/images/Logo.png", short: "PDA, tablettes et téléphones pour terrain et point de vente.", tags: ["PDA", "Tablette"], productIds: ["prod-pda", "prod-tablette", "prod-telephone"] },
-  { id: "cat-moniteur", name: "Moniteur", logoSrc: "/images/Logo.png", short: "Écrans et moniteurs pour poste et affichage.", tags: ["Affichage", "HD"], productIds: ["prod-moniteur"] },
-  { id: "cat-pos", name: "POS", logoSrc: "/images/Logo.png", short: "Caisses et terminaux pour point de vente.", tags: ["Caisse", "TPV"], productIds: ["prod-caisse", "prod-tiroir-caisse", "prod-terminal-pos"] },
-  { id: "cat-service", name: "Service", logoSrc: "/images/Logo.png", short: "Alarme, caméra, serveur, réseau, domotique, serrure et contrôle d'accès.", tags: ["Sécurité", "Réseau"], productIds: ["prod-alarme", "prod-antenne", "prod-armoire-technique", "prod-camera", "prod-detecteur-feu", "prod-domotique", "prod-interphone", "prod-materiel-reseau", "prod-pointeuse", "prod-serveur", "prod-tv", "prod-serrure-digital", "prod-controle-acces"] },
-  { id: "cat-tag", name: "Tag", logoSrc: "/images/Logo.png", short: "Tags, cartes et bracelets RFID pour accès et traçabilité.", tags: ["RFID", "Badge"], productIds: ["prod-bracelet", "prod-carte", "prod-tag"] },
-  { id: "cat-tourniquet", name: "Tourniquet", logoSrc: "/images/Logo.png", short: "Tourniquets pour contrôle d'accès et gestion des flux.", tags: ["Accès", "Flux"], productIds: ["prod-tourniquet"] },
+  { id: "cat-borne", name: "Borne", logoSrc: "/images/Logo.png", icon: "kiosk", short: "Bornes libre-service pour tickets, accès ou information.", tags: ["Tactile", "Réseau"], productIds: ["prod-borne"] },
+  { id: "cat-imprimante", name: "Imprimante", logoSrc: "/images/Logo.png", icon: "printer", short: "Imprimantes reçus, étiquettes et thermiques, réseau ou mobile.", tags: ["Thermique", "Réseau"], productIds: ["prod-imprimante", "prod-imprimante-mobile"] },
+  { id: "cat-lecteur", name: "Lecteur", logoSrc: "/images/Logo.png", icon: "scan", short: "Lecteurs et scanners RFID/NFC/UHF pour badges et traçabilité.", tags: ["RFID", "UHF"], productIds: ["prod-antenne-uhf", "prod-lecteur", "prod-lecteur-uhf", "prod-scanner-uhf"] },
+  { id: "cat-mobile", name: "Mobile", logoSrc: "/images/Logo.png", icon: "smartphone", short: "PDA, tablettes et téléphones pour terrain et point de vente.", tags: ["PDA", "Tablette"], productIds: ["prod-pda", "prod-tablette", "prod-telephone"] },
+  { id: "cat-moniteur", name: "Moniteur", logoSrc: "/images/Logo.png", icon: "monitor", short: "Écrans et moniteurs pour poste et affichage.", tags: ["Affichage", "HD"], productIds: ["prod-moniteur"] },
+  { id: "cat-pos", name: "POS", logoSrc: "/images/Logo.png", icon: "credit-card", short: "Caisses et terminaux pour point de vente.", tags: ["Caisse", "TPV"], productIds: ["prod-caisse", "prod-tiroir-caisse", "prod-terminal-pos"] },
+  { id: "cat-service", name: "Service", logoSrc: "/images/Logo.png", icon: "wrench", short: "Alarme, caméra, serveur, réseau, domotique, serrure et contrôle d'accès.", tags: ["Sécurité", "Réseau"], productIds: ["prod-alarme", "prod-antenne", "prod-armoire-technique", "prod-camera", "prod-detecteur-feu", "prod-domotique", "prod-interphone", "prod-materiel-reseau", "prod-pointeuse", "prod-serveur", "prod-tv", "prod-serrure-digital", "prod-controle-acces"] },
+  { id: "cat-tag", name: "Tag", logoSrc: "/images/Logo.png", icon: "tag", short: "Tags, cartes et bracelets RFID pour accès et traçabilité.", tags: ["RFID", "Badge"], productIds: ["prod-bracelet", "prod-carte", "prod-tag"] },
+  { id: "cat-tourniquet", name: "Tourniquet", logoSrc: "/images/Logo.png", icon: "door-open", short: "Tourniquets pour contrôle d'accès et gestion des flux.", tags: ["Accès", "Flux"], productIds: ["prod-tourniquet"] },
 ]
 
 export function getProductById(id: string): ProductItem | undefined {

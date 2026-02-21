@@ -13,7 +13,7 @@ const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit" })
 export const metadata: Metadata = {
   title: "1erSysteme | Enterprise Technology Solutions",
   description:
-    "Transforming businesses through innovative technology solutions. Cloud infrastructure, AI integration, cybersecurity, and digital transformation.",
+    "We design, deploy and maintain critical systems: point of sale, ticketing, access control, RFID, reservations and infrastructure.",
 }
 
 export const viewport: Viewport = {

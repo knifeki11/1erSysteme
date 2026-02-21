@@ -6,6 +6,7 @@ import {
   useSyncExternalStore,
   useCallback,
   useEffect,
+  useState,
   type ReactNode,
 } from "react"
 import { en } from "@/lib/translations/en"
@@ -64,18 +65,27 @@ const getSnapshot = () => localeStore.getSnapshot()
 const getServerSnapshot = () => localeStore.getServerSnapshot()
 
 export function I18nProvider({ children }: { children: ReactNode }) {
-  const locale = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot)
+  const localeFromStore = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot)
+  const [hasMounted, setHasMounted] = useState(false)
 
   const setLocale = useCallback((l: Locale) => {
     localeStore.setLocale(l)
   }, [])
 
   useEffect(() => {
+    setHasMounted(true)
+  }, [])
+
+  useEffect(() => {
+    if (!hasMounted) return
     const saved = localStorage.getItem("locale") as Locale | null
     if (saved && translationsMap[saved]) {
       localeStore.setLocale(saved)
     }
-  }, [])
+  }, [hasMounted])
+
+  // Use defaultLocale until after mount so server and first client render match (avoids hydration mismatch)
+  const locale = hasMounted ? localeFromStore : defaultLocale
 
   useEffect(() => {
     document.documentElement.lang = locale

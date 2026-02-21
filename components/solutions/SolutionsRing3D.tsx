@@ -77,19 +77,17 @@ const CAMERA_DISTANCE = 9.2
 const AUTOPLAY_SPEED = 0.08
 const LERP_FACTOR = 0.08
 const LERP_FACTOR_REDUCED_MOTION = 0.25
-// Full-screen horizontal ring only (centered); on card click ring moves left and detail card appears right
+// Ring slightly left to leave space for the right-side detail card; no zoom-out
 const HORIZONTAL_RING_X = 0
 const HORIZONTAL_FRONT_ANGLE = Math.atan2(-HORIZONTAL_RING_X, CAMERA_DISTANCE)
-// When a card is expanded: ring moves left and shrinks, detail card on the right
 const RING_SCALE_INITIAL = 1.08
-const RING_LEFT_WHEN_EXPANDED = -2.2
-const EXPANDED_OFFSET_X = 1.0
-const RING_SCALE_WHEN_EXPANDED = 0.88
-const DETAIL_CARD_X = 3.4
-const DETAIL_CARD_WIDTH = 2.4
-const DETAIL_CARD_HEIGHT = 3.5
-const LERP_POSITION = 0.032
-const LERP_SCALE = 0.032
+/** Ring base position; block offset shifts ring+card together to the right */
+const RING_LEFT_OFFSET = -2.8
+/** Card position relative to center; block offset shifts ring+card together */
+const DETAIL_CARD_X = 5.8
+/** Move entire block (ring + card) right to use right-side space */
+const BLOCK_OFFSET_X = 1.8
+const LERP_POSITION = 0.04
 const ACTIVE_CARD_ZOOM = 1.5
 const ZOOM_LERP = 0.06
 const RING_SHADOW_RADIUS = RING_RADIUS * 1.05
@@ -221,20 +219,9 @@ function RingInner({
   const cardGroupRefs = useRef<(THREE.Group | null)[]>([])
   const currentScalesRef = useRef<number[]>([])
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
-  const [hasExpanded, setHasExpanded] = useState(false)
-  const autoplayRef = useRef(true)
   const N = Math.max(1, items.length)
 
-  // Ring position/scale when expanded (move left, zoom out to leave room for detail card)
   const ringPositionXRef = useRef(0)
-  const ringScaleRef = useRef(RING_SCALE_INITIAL)
-  const detailCardScaleRef = useRef(0)
-  const prevActiveIndexRef = useRef(activeIndex)
-  const outgoingScaleRef = useRef(0)
-  const outgoingGroupRef = useRef<THREE.Group>(null)
-  const incomingScaleRef = useRef(0)
-  const incomingGroupRef = useRef<THREE.Group>(null)
-  const expandedOffsetXRef = useRef(0)
   const detailCardContainerRef = useRef<THREE.Group>(null)
 
   if (currentScalesRef.current.length !== N) {
@@ -242,15 +229,7 @@ function RingInner({
   }
 
   const handleSelectIndex = (index: number) => {
-    const prev = activeIndex
     onSelectIndex(index)
-    if (embeddable) return
-    setHasExpanded(true)
-    if (index !== prev && hasExpanded) {
-      prevActiveIndexRef.current = prev
-      outgoingScaleRef.current = 1
-      incomingScaleRef.current = 0
-    }
   }
 
   // Pick shortest rotation to bring activeIndex to front: always rotate the minimal angle left or right.
@@ -267,12 +246,7 @@ function RingInner({
     if (delta > Math.PI) delta -= twoPi
     if (delta <= -Math.PI) delta += twoPi
     targetRotationRef.current = actualCurrent + delta
-    if (hasExpanded) {
-      autoplayRef.current = false
-      const t = setTimeout(() => { autoplayRef.current = true }, 6000)
-      return () => clearTimeout(t)
-    }
-  }, [activeIndex, N, hasExpanded])
+  }, [activeIndex, N])
 
   useFrame(() => {
     const group = horizontalGroupRef.current
@@ -285,61 +259,19 @@ function RingInner({
     group.rotation.y = next
   })
 
-  useFrame((_, delta) => {
-    if (reducedMotion || !autoplayRef.current || N <= 0) return
-    targetRotationRef.current += AUTOPLAY_SPEED * delta
-    // Do not normalize here: keep target (and current, which lerps toward it) unbounded so the ring
-    // never "wraps" backward and feels like a continuous loop. Periodically renormalize both refs
-    // to avoid float drift when they get large.
-    const twoPi = 2 * Math.PI
-    const threshold = 50 * twoPi
-    if (Math.abs(targetRotationRef.current) >= threshold || Math.abs(currentRotationRef.current) >= threshold) {
-      const base = Math.floor(currentRotationRef.current / twoPi) * twoPi
-      currentRotationRef.current -= base
-      targetRotationRef.current -= base
-    }
-  })
+  // No continuous autoplay: ring is driven only by activeIndex (5s auto-advance or user click) so card and ring stay in sync
 
-  // Ring position.x and scale: when embeddable never expand; otherwise bigger at first, then lerp to left + smaller when hasExpanded.
+  // Ring + card position: block offset moves both right; ring slightly left of center, card to its right
   useFrame(() => {
     const group = horizontalGroupRef.current
     const container = detailCardContainerRef.current
     if (!group) return
-    const targetX = !embeddable && hasExpanded ? RING_LEFT_WHEN_EXPANDED : 0
-    const targetScale = !embeddable && hasExpanded ? RING_SCALE_WHEN_EXPANDED : RING_SCALE_INITIAL
-    const targetOffsetX = !embeddable && hasExpanded ? EXPANDED_OFFSET_X : 0
     const lerpPos = reducedMotion ? 0.08 : LERP_POSITION
-    const lerpScale = reducedMotion ? 0.08 : LERP_SCALE
-    ringPositionXRef.current = THREE.MathUtils.lerp(ringPositionXRef.current, targetX, lerpPos)
-    ringScaleRef.current = THREE.MathUtils.lerp(ringScaleRef.current, targetScale, lerpScale)
-    expandedOffsetXRef.current = THREE.MathUtils.lerp(expandedOffsetXRef.current, targetOffsetX, lerpPos)
-    group.position.x = ringPositionXRef.current + expandedOffsetXRef.current
-    group.scale.setScalar(ringScaleRef.current)
-    if (container) container.position.x = DETAIL_CARD_X + expandedOffsetXRef.current
-  })
-
-  const inTransition = activeIndex !== prevActiveIndexRef.current
-
-  useFrame(() => {
-    const targetDetailScale = hasExpanded ? 1 : 0
-    const lerp = reducedMotion ? 0.12 : 0.08
-
-    if (inTransition) {
-      outgoingScaleRef.current = THREE.MathUtils.lerp(outgoingScaleRef.current, 0, lerp)
-      incomingScaleRef.current = THREE.MathUtils.lerp(incomingScaleRef.current, 1, lerp)
-      if (outgoingGroupRef.current) {
-        outgoingGroupRef.current.scale.setScalar(outgoingScaleRef.current)
-        outgoingGroupRef.current.visible = outgoingScaleRef.current >= 0.005
-      }
-      if (incomingGroupRef.current) {
-        incomingGroupRef.current.scale.setScalar(incomingScaleRef.current)
-      }
-      if (outgoingScaleRef.current < 0.01) prevActiveIndexRef.current = activeIndex
-    } else {
-      if (!inTransition) outgoingScaleRef.current = 0
-      detailCardScaleRef.current = THREE.MathUtils.lerp(detailCardScaleRef.current, targetDetailScale, lerp)
-      if (incomingGroupRef.current) incomingGroupRef.current.scale.setScalar(detailCardScaleRef.current)
-    }
+    const targetRingX = RING_LEFT_OFFSET + BLOCK_OFFSET_X
+    ringPositionXRef.current = THREE.MathUtils.lerp(ringPositionXRef.current, targetRingX, lerpPos)
+    group.position.x = ringPositionXRef.current
+    group.scale.setScalar(RING_SCALE_INITIAL)
+    if (container) container.position.x = DETAIL_CARD_X + BLOCK_OFFSET_X
   })
 
   // Animated zoom (horizontal): when not embeddable, selected card scales up; when embeddable no card zoom
@@ -433,44 +365,15 @@ function RingInner({
         </group>
       </group>
 
-      {/* Right: detail card(s). Only show when not embeddable and user has clicked a card. */}
-      {items.length > 0 && !embeddable && (
+      {/* Right: small detail card with 3 bullet points — visible on home (embeddable) and solutions page */}
+      {items.length > 0 && items[activeIndex] && (
         <group ref={detailCardContainerRef} position={[DETAIL_CARD_X, 0, 0]} renderOrder={10}>
-          {hasExpanded && (
-            <>
-              {inTransition && items[prevActiveIndexRef.current] != null && (
-                <group
-                  ref={outgoingGroupRef}
-                  position={[0, 0, 0]}
-                  scale={1}
-                  renderOrder={10}
-                >
-                  <DetailCardRight
-                    key={`out-${prevActiveIndexRef.current}`}
-                    item={items[prevActiveIndexRef.current]}
-                    isDark={isDark}
-                    overviewLabel={overviewLabel}
-                    isOutgoing
-                  />
-                </group>
-              )}
-              {items[activeIndex] && (
-                <group
-                  ref={incomingGroupRef}
-                  position={[0, 0, 0]}
-                  scale={detailCardScaleRef.current}
-                  renderOrder={10}
-                >
-                  <DetailCardRight
-                    key={`in-${activeIndex}`}
-                    item={items[activeIndex]}
-                    isDark={isDark}
-                    overviewLabel={overviewLabel}
-                  />
-                </group>
-              )}
-            </>
-          )}
+          <DetailCardRight
+            key={activeIndex}
+            item={items[activeIndex]}
+            isDark={isDark}
+            overviewLabel={overviewLabel}
+          />
         </group>
       )}
     </>
@@ -502,29 +405,19 @@ function ReflectionMaterial({
   )
 }
 
-const SOLUTION_PANEL_WIDTH_PX = 260
-const SOLUTION_PANEL_MAX_HEIGHT = "min(65vh, 380px)"
+const SOLUTION_PANEL_WIDTH_PX = 240
+const SOLUTION_PANEL_MAX_HEIGHT = "min(50vh, 260px)"
 
 function DetailCardRight({
   item,
   isDark,
   overviewLabel,
-  isOutgoing = false,
 }: {
   item: SolutionRingItem
   isDark: boolean
   overviewLabel?: string
-  /** When true, panel plays zoom-out exit animation (e.g. when switching to another solution). */
-  isOutgoing?: boolean
 }) {
-  const rawDesc =
-    typeof item.description === "string"
-      ? item.description
-      : typeof item.shortDescription === "string"
-        ? item.shortDescription
-        : ""
-  const desc = rawDesc.replace(/[\u00AD\u2010\u2011\u2012\u2013\u2014\u2015\u2212\uFE58\uFE63\uFF0D]/g, "-")
-  const tags = (item.tags ?? []).slice(0, 3)
+  const bullets = (item.tags ?? []).slice(0, 3)
 
   return (
     <group>
@@ -540,56 +433,54 @@ function DetailCardRight({
       >
         <div
           className={
-            (isOutgoing ? "solution-panel-exit " : "solution-panel-enter ") +
-            "group flex w-full flex-col overflow-hidden rounded-[18px] border backdrop-blur-xl transition-shadow duration-300 " +
+            "group flex w-full flex-col overflow-hidden rounded-2xl border backdrop-blur-md transition-all duration-300 " +
             (isDark
-              ? "border-white/[0.08] bg-black/30 shadow-[0_8px_32px_-8px_rgba(0,0,0,0.4),0_0_0_1px_rgba(255,255,255,0.04)] hover:shadow-[0_8px_40px_-8px_rgba(0,0,0,0.5),0_0_0_1px_rgba(255,255,255,0.06),0_0_40px_-12px_hsl(210_100%_52%_/_0.12)]"
-              : "border-black/[0.06] bg-white/40 shadow-[0_8px_32px_-8px_rgba(0,0,0,0.08),0_0_0_1px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_40px_-8px_rgba(0,0,0,0.1),0_0_0_1px_rgba(0,0,0,0.06),0_0_40px_-12px_hsl(210_100%_52%_/_0.15)]")
+              ? "border-white/[0.08] shadow-[0_8px_24px_-8px_rgba(0,0,0,0.25)]"
+              : "border-black/[0.06] shadow-[0_8px_24px_-8px_rgba(0,0,0,0.06)]")
           }
           style={{
             maxHeight: SOLUTION_PANEL_MAX_HEIGHT,
             background: isDark
-              ? "linear-gradient(135deg, rgba(0,0,0,0.35) 0%, rgba(26,26,40,0.25) 50%, rgba(40,20,50,0.08) 100%)"
-              : "linear-gradient(135deg, rgba(255,255,255,0.6) 0%, rgba(248,250,255,0.5) 50%, rgba(255,248,252,0.15) 100%)",
+              ? "linear-gradient(160deg, rgba(20,20,35,0.22) 0%, rgba(28,26,42,0.18) 50%, rgba(35,25,48,0.14) 100%)"
+              : "linear-gradient(160deg, rgba(255,255,255,0.28) 0%, rgba(250,251,255,0.22) 50%, rgba(255,250,253,0.18) 100%)",
           }}
         >
-          <div className="relative flex max-h-[min(65vh,380px)] flex-col overflow-hidden rounded-[18px] p-4">
+          <div className="relative flex flex-col overflow-hidden rounded-2xl p-4">
+            {/* Subtle left accent */}
             <div
-              className="pointer-events-none absolute inset-0 rounded-[18px] opacity-100"
+              className="absolute left-0 top-4 bottom-4 w-0.5 rounded-full opacity-80"
               style={{
                 background: isDark
-                  ? "radial-gradient(ellipse 80% 60% at 20% 0%, hsl(210 100% 52% / 0.06), transparent 50%), radial-gradient(ellipse 60% 50% at 80% 100%, hsl(330 70% 55% / 0.04), transparent 50%)"
-                  : "radial-gradient(ellipse 80% 60% at 20% 0%, hsl(210 100% 52% / 0.08), transparent 50%), radial-gradient(ellipse 60% 50% at 80% 100%, hsl(330 70% 55% / 0.05), transparent 50%)",
+                  ? "linear-gradient(180deg, hsl(270 70% 60%), hsl(330 70% 55%))"
+                  : "linear-gradient(180deg, hsl(262 83% 58%), hsl(330 70% 55%))",
               }}
               aria-hidden
             />
-            <div className="relative flex min-h-0 flex-1 flex-col">
+            <div className="pl-3">
               {overviewLabel && (
-                <p className="mb-1 text-[9px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                <p className="mb-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
                   {overviewLabel}
                 </p>
               )}
-              <h3 className="font-hero text-xl font-bold leading-tight tracking-tight text-foreground">
+              <h3 className="font-hero text-lg font-bold leading-tight tracking-tight text-foreground">
                 {item.name ?? ""}
               </h3>
-              {tags.length > 0 && (
-                <div className="mt-2 flex flex-wrap gap-1.5">
-                  {tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className={
-                        isDark
-                          ? "rounded-full border border-white/10 bg-white/5 px-2.5 py-0.5 text-[11px] text-foreground/90"
-                          : "rounded-full border border-black/10 bg-black/5 px-2.5 py-0.5 text-[11px] text-foreground/90"
-                      }
+              {bullets.length > 0 && (
+                <ul className="mt-3 space-y-2">
+                  {bullets.map((b) => (
+                    <li
+                      key={b}
+                      className="flex items-center gap-2 text-sm leading-snug text-foreground/88"
                     >
-                      {tag}
-                    </span>
+                      <span
+                        className="h-1 w-1 shrink-0 rounded-full bg-current opacity-60"
+                        aria-hidden
+                      />
+                      {b}
+                    </li>
                   ))}
-                </div>
+                </ul>
               )}
-              <div className="my-3 h-px shrink-0 bg-gradient-to-r from-transparent via-border to-transparent" />
-              <p className="min-h-0 flex-1 overflow-y-auto text-[15px] leading-snug italic text-foreground/90">{desc}</p>
             </div>
           </div>
         </div>

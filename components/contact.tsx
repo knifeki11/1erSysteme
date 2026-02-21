@@ -88,9 +88,9 @@ export function Contact() {
               <Image
                 src="/images/Logo.png"
                 alt="1erSysteme"
-                width={32}
-                height={32}
-                className="h-8 w-8 object-contain"
+                width={48}
+                height={48}
+                className="h-12 w-12 object-contain"
               />
               <span className="h-5 w-px bg-accent/50" aria-hidden="true" />
               <span>{contact.label}</span>

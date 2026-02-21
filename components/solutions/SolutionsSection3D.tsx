@@ -3,6 +3,8 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef, Component } from "react"
 import dynamic from "next/dynamic"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { Loader2 } from "lucide-react"
 import { useI18n } from "@/lib/i18n-context"
 import { useTheme } from "@/lib/theme-context"
 import { SOLUTIONS_RING_ORDER, SOLUTION_LOGOS } from "./solutions-ring-data"
@@ -110,6 +112,7 @@ export function SolutionsSection3D({ compact, embeddable }: SolutionsSection3DPr
   const { theme } = useTheme()
   const isDark = theme === "dark"
   const [activeIndex, setActiveIndex] = useState(0)
+  const [userHasClicked, setUserHasClicked] = useState(false)
   const [reducedMotion, setReducedMotion] = useState(false)
   const [remountKey, setRemountKey] = useState(0)
   const [contextLost, setContextLost] = useState(false)
@@ -170,6 +173,15 @@ export function SolutionsSection3D({ compact, embeddable }: SolutionsSection3DPr
     window.addEventListener("keydown", handleKeyDown)
     return () => window.removeEventListener("keydown", handleKeyDown)
   }, [handleKeyDown])
+
+  // When user hasn't clicked, advance to next solution every 5s so card and ring stay in sync
+  useEffect(() => {
+    if (userHasClicked || ringItems.length <= 1) return
+    const id = setInterval(() => {
+      setActiveIndex((prev) => (prev + 1) % ringItems.length)
+    }, 5000)
+    return () => clearInterval(id)
+  }, [userHasClicked, ringItems.length])
 
   /* Match the 3D ring cube colors: light #f0f0f8, dark #1e1e2e */
   const fallbackBg =
@@ -239,6 +251,23 @@ export function SolutionsSection3D({ compact, embeddable }: SolutionsSection3DPr
 
   const seeSolutionLabel = t.aboutSolutions?.seeSolution
   const solutionSlug = activeItem?.name?.toLowerCase().replace(/\s+/g, "") ?? ""
+  const solutionHref = solutionSlug ? `/solutions/${solutionSlug}` : ""
+  const router = useRouter()
+  const [navigatingTo, setNavigatingTo] = useState<string | null>(null)
+
+  const handleSeeSolutionClick = useCallback(
+    (e: React.MouseEvent) => {
+      if (!solutionHref) return
+      e.preventDefault()
+      setNavigatingTo(solutionSlug)
+      router.push(solutionHref)
+    },
+    [solutionHref, solutionSlug, router]
+  )
+
+  const handleSeeSolutionMouseEnter = useCallback(() => {
+    if (solutionHref) router.prefetch(solutionHref)
+  }, [solutionHref, router])
 
   return (
     <Wrapper {...wrapperProps}>
@@ -260,7 +289,10 @@ export function SolutionsSection3D({ compact, embeddable }: SolutionsSection3DPr
             <SolutionsRing3D
               items={ringItems}
               activeIndex={activeIndex}
-              onSelectIndex={setActiveIndex}
+              onSelectIndex={(index) => {
+                setUserHasClicked(true)
+                setActiveIndex(index)
+              }}
               isDark={isDark}
               reducedMotion={reducedMotion}
               overviewLabel={content?.overviewLabel}
@@ -281,10 +313,16 @@ export function SolutionsSection3D({ compact, embeddable }: SolutionsSection3DPr
           >
             <span className="text-lg font-semibold">{activeItem.name}</span>
             <Link
-              href={`/solutions/${solutionSlug}`}
-              className="inline-flex items-center justify-center rounded-full border border-current bg-transparent px-4 py-2 text-sm font-medium text-foreground no-underline opacity-90 transition-opacity hover:opacity-100"
+              href={solutionHref}
+              onMouseEnter={handleSeeSolutionMouseEnter}
+              onClick={handleSeeSolutionClick}
+              className="inline-flex items-center justify-center gap-2 rounded-full border border-current bg-transparent px-4 py-2 text-sm font-medium text-foreground no-underline opacity-90 transition-opacity hover:opacity-100 disabled:pointer-events-none"
+              aria-busy={navigatingTo === solutionSlug}
             >
-              {seeSolutionLabel}
+              {navigatingTo === solutionSlug ? (
+                <Loader2 className="h-4 w-4 shrink-0 animate-spin" aria-hidden />
+              ) : null}
+              <span>{seeSolutionLabel}</span>
             </Link>
           </div>
         )}
