@@ -28,7 +28,7 @@ export function SolutionsGridSection() {
     return {
       name,
       slug: solutionSlug(name),
-      logoSrc: SOLUTION_LOGOS[name] ?? "/images/Logo.png",
+      logoSrc: SOLUTION_LOGOS[name] ?? "/images/final_logo/Logo%20(2).svg",
       description: shortDesc,
       tags: (fromT?.tags ?? []).slice(0, 3),
     }

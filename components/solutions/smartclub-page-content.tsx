@@ -18,6 +18,7 @@ import {
   GraduationCap,
   Dumbbell,
   ArrowRight,
+  Check,
 } from "lucide-react"
 
 const SECTION_BG = "bg-[#fbfbfb] dark:bg-[#040404]"
@@ -54,7 +55,9 @@ type SmartclubPageT = {
   problemPara1?: string
   problemBullets?: readonly string[]
   overviewPara?: string
+  overviewPara2?: string
   overviewBullets?: readonly string[]
+  sectionFeaturesList?: readonly string[]
   capabilityRfidDesc?: string
   capabilityRevenueDesc?: string
   capabilityRemoteDesc?: string
@@ -110,11 +113,14 @@ export function SmartClubPageContent() {
           <div className="mt-10 flex flex-col gap-10 rounded-2xl border border-border/60 bg-card/50 p-6 shadow-[0_4px_24px_rgba(0,0,0,0.06)] backdrop-blur-sm dark:border-white/10 dark:bg-white/[0.04] dark:shadow-[0_4px_24px_rgba(0,0,0,0.2)] sm:p-8 lg:flex-row lg:items-center lg:gap-16">
             <div className="min-w-0 flex-1 space-y-4 text-base leading-relaxed text-muted-foreground">
               <p>{s.overviewPara}</p>
-              <ul className="list-disc space-y-2 pl-5">
-                {(s.overviewBullets ?? []).map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
+              {s.overviewPara2 != null && <p>{s.overviewPara2}</p>}
+              {(s.overviewBullets ?? []).length > 0 && (
+                <ul className="list-disc space-y-2 pl-5">
+                  {(s.overviewBullets ?? []).map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
+              )}
             </div>
             <div className="relative aspect-video w-full shrink-0 overflow-hidden rounded-2xl border border-border/60 bg-card/40 shadow-[0_4px_24px_rgba(0,0,0,0.06)] dark:border-white/10 dark:bg-white/5 dark:shadow-[0_4px_24px_rgba(0,0,0,0.2)] lg:w-80">
               <img src="/images/SmarC1.jpg" alt={s.imageAltSmartC1 ?? "SmartClub intelligent gaming space"} className="h-full w-full object-cover" loading="lazy" />
@@ -123,41 +129,52 @@ export function SmartClubPageContent() {
         </div>
       </section>
 
-      {/* 3) Key System Capabilities */}
+      {/* 3) Fonctionnalités */}
       <section className={cn("relative py-16 sm:py-24", SECTION_BG)}>
         <div className={cn("pointer-events-none absolute inset-0 -z-10", SECTION_RADIAL)} aria-hidden />
         <div className="mx-auto max-w-6xl px-6 lg:px-8">
           <h2 className="font-hero text-2xl font-semibold tracking-[-0.02em] text-foreground sm:text-3xl">
             {s.sectionCapabilities}
           </h2>
-          <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {[
-              { icon: Radio, title: s.capabilityRfid, desc: s.capabilityRfidDesc },
-              { icon: TrendingUp, title: s.capabilityRevenue, desc: s.capabilityRevenueDesc },
-              { icon: Monitor, title: s.capabilityRemote, desc: s.capabilityRemoteDesc },
-              { icon: Trophy, title: s.capabilityTournament, desc: s.capabilityTournamentDesc },
-              { icon: Users, title: s.capabilityLoyalty, desc: s.capabilityLoyaltyDesc },
-              { icon: BarChart3, title: s.capabilityStaff, desc: s.capabilityStaffDesc },
-            ].map(({ icon: Icon, title, desc }) => (
-              <div
-                key={title}
-                className={cn(
-                  "rounded-2xl border border-border/60 bg-card/50 p-6 shadow-[0_4px_20px_rgba(0,0,0,0.06)] transition-shadow hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)]",
-                  "dark:border-white/10 dark:bg-white/[0.04] dark:shadow-[0_4px_20px_rgba(0,0,0,0.2)] dark:hover:shadow-[0_8px_30px_rgba(0,0,0,0.25)]"
-                )}
-              >
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted/60 dark:bg-white/10">
-                  <Icon className="h-5 w-5 text-foreground/80" aria-hidden />
+          {(s.sectionFeaturesList?.length ?? 0) > 0 ? (
+            <ul className="mt-10 grid gap-3 sm:grid-cols-2 text-base leading-relaxed text-muted-foreground">
+              {s.sectionFeaturesList!.map((item) => (
+                <li key={item} className="flex items-center gap-3">
+                  <Check className="h-5 w-5 shrink-0 text-accent" aria-hidden />
+                  {item}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {[
+                { icon: Radio, title: s.capabilityRfid, desc: s.capabilityRfidDesc },
+                { icon: TrendingUp, title: s.capabilityRevenue, desc: s.capabilityRevenueDesc },
+                { icon: Monitor, title: s.capabilityRemote, desc: s.capabilityRemoteDesc },
+                { icon: Trophy, title: s.capabilityTournament, desc: s.capabilityTournamentDesc },
+                { icon: Users, title: s.capabilityLoyalty, desc: s.capabilityLoyaltyDesc },
+                { icon: BarChart3, title: s.capabilityStaff, desc: s.capabilityStaffDesc },
+              ].map(({ icon: Icon, title, desc }) => (
+                <div
+                  key={title}
+                  className={cn(
+                    "rounded-2xl border border-border/60 bg-card/50 p-6 shadow-[0_4px_20px_rgba(0,0,0,0.06)] transition-shadow hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)]",
+                    "dark:border-white/10 dark:bg-white/[0.04] dark:shadow-[0_4px_20px_rgba(0,0,0,0.2)] dark:hover:shadow-[0_8px_30px_rgba(0,0,0,0.25)]"
+                  )}
+                >
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted/60 dark:bg-white/10">
+                    <Icon className="h-5 w-5 text-foreground/80" aria-hidden />
+                  </div>
+                  <h3 className="font-hero mt-4 text-lg font-semibold tracking-[-0.02em] text-foreground">
+                    {title}
+                  </h3>
+                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                    {desc}
+                  </p>
                 </div>
-                <h3 className="font-hero mt-4 text-lg font-semibold tracking-[-0.02em] text-foreground">
-                  {title}
-                </h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                  {desc}
-                </p>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

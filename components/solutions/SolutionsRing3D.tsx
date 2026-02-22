@@ -294,13 +294,13 @@ function RingInner({
     if (typeof window === "undefined") return []
     const base = window.location.origin
     return [
-      ...SOLUTIONS_RING_ORDER.map((name) => base + (SOLUTION_LOGOS[name] ?? "/images/Logo.png")),
-      base + "/images/Logo.png",
+      ...SOLUTIONS_RING_ORDER.map((name) => base + (SOLUTION_LOGOS[name] ?? "/images/final_logo/Logo%20(2).svg")),
+      base + "/images/final_logo/Logo%20(2).svg",
     ]
   }, [])
 
   const allTextures = useTexture(
-    urls.length ? urls : [typeof window !== "undefined" ? window.location.origin + "/images/Logo.png" : "/images/Logo.png"]
+    urls.length ? urls : [typeof window !== "undefined" ? window.location.origin + "/images/final_logo/Logo%20(2).svg" : "/images/final_logo/Logo%20(2).svg"]
   )
   const textures = Array.isArray(allTextures) ? allTextures : [allTextures]
   const centerLogoTexture = textures[textures.length - 1]

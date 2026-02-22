@@ -25,10 +25,13 @@ export function Header() {
   const [inverted, setInverted] = useState(false)
   const [langOpen, setLangOpen] = useState(false)
   const [solutionsOpen, setSolutionsOpen] = useState(false)
+  const [servicesOpen, setServicesOpen] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [scrollOffset, setScrollOffset] = useState(0)
   const langRef = useRef<HTMLDivElement>(null)
   const solutionsRef = useRef<HTMLDivElement>(null)
+  const servicesRef = useRef<HTMLDivElement>(null)
+  const servicesCloseTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const lastScrollY = useRef(0)
   const { t, locale, setLocale } = useI18n()
   const { theme, toggleTheme } = useTheme()
@@ -88,6 +91,13 @@ export function Header() {
       if (solutionsRef.current && !solutionsRef.current.contains(target)) {
         setSolutionsOpen(false)
       }
+      if (servicesRef.current && !servicesRef.current.contains(target)) {
+        if (servicesCloseTimeoutRef.current) {
+          clearTimeout(servicesCloseTimeoutRef.current)
+          servicesCloseTimeoutRef.current = null
+        }
+        setServicesOpen(false)
+      }
     }
     document.addEventListener("mousedown", handleClickOutside)
     return () => document.removeEventListener("mousedown", handleClickOutside)
@@ -128,7 +138,7 @@ export function Header() {
           style={{ right: locale === "ar" ? "0" : "auto", left: locale === "ar" ? "auto" : "0" }}
         >
           <Image
-            src="/images/Logo.png"
+            src="/images/final_logo/Logo%20(2).svg"
             alt="1erSysteme"
             width={80}
             height={80}
@@ -149,11 +159,11 @@ export function Header() {
           <div className="flex h-full flex-col items-center pl-2 pr-4 pt-2 pb-6 sm:pl-3 sm:pr-5 sm:pt-3">
             <Link href="/" aria-label="1erSysteme home" className="mb-4">
               <Image
-                src="/images/Logo.png"
+                src="/images/final_logo/Logo%20(2).svg"
                 alt="1erSysteme"
-                width={120}
-                height={120}
-                className="h-24 w-24 sm:h-28 sm:w-28 object-contain"
+                width={80}
+                height={80}
+                className="h-14 w-14 sm:h-16 sm:w-16 object-contain"
               />
             </Link>
             {/* Vertical line */}
@@ -243,6 +253,35 @@ export function Header() {
                       </Link>
                     )
                   }
+                  if (item.href === "/services") {
+                    return (
+                      <div key={item.href} className="flex flex-col gap-1">
+                        <Link
+                          href="/services"
+                          onClick={() => setMobileMenuOpen(false)}
+                          className="rounded-lg px-3 py-2.5 text-sm font-medium text-foreground hover:bg-muted"
+                        >
+                          {item.label}
+                        </Link>
+                        <div className="pl-4 flex flex-col gap-0.5">
+                          <Link
+                            href="/services/developpement"
+                            onClick={() => setMobileMenuOpen(false)}
+                            className="rounded-lg px-3 py-2 text-sm text-muted-foreground hover:bg-muted hover:text-foreground"
+                          >
+                            {t.nav.servicesDeveloppement}
+                          </Link>
+                          <Link
+                            href="/services/infrastructure-reseau"
+                            onClick={() => setMobileMenuOpen(false)}
+                            className="rounded-lg px-3 py-2 text-sm text-muted-foreground hover:bg-muted hover:text-foreground"
+                          >
+                            {t.nav.servicesInfrastructure}
+                          </Link>
+                        </div>
+                      </div>
+                    )
+                  }
                   return (
                     <Link
                       key={item.href}
@@ -293,6 +332,7 @@ export function Header() {
         <div className="hidden items-center gap-1 sm:gap-3 lg:gap-5 md:flex">
         {navItems.map((item) => {
           const isSolutions = item.href === "/solutions"
+          const isServices = item.href === "/services"
           if (isSolutions) {
             return (
               <div
@@ -339,6 +379,98 @@ export function Header() {
                           {name}
                         </Link>
                       ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )
+          }
+          if (isServices) {
+            return (
+              <div
+                key={item.href}
+                ref={servicesRef}
+                className="relative"
+                onMouseEnter={() => {
+                  if (servicesCloseTimeoutRef.current) {
+                    clearTimeout(servicesCloseTimeoutRef.current)
+                    servicesCloseTimeoutRef.current = null
+                  }
+                  setServicesOpen(true)
+                }}
+                onMouseLeave={() => {
+                  servicesCloseTimeoutRef.current = setTimeout(() => {
+                    servicesCloseTimeoutRef.current = null
+                    setServicesOpen(false)
+                  }, 300)
+                }}
+              >
+                <Link
+                  href="/services"
+                  className="inline-flex items-center gap-0.5 text-xs font-medium transition-colors duration-500 sm:text-sm"
+                  style={{ color: mutedTextColor }}
+                >
+                  {!useInvertedColors && (
+                    <span className="text-muted-foreground hover:text-foreground">
+                      {item.label}
+                    </span>
+                  )}
+                  {useInvertedColors && item.label}
+                  <ChevronDown
+                    className={`h-3.5 w-3.5 sm:h-4 sm:w-4 transition-transform duration-200 ${servicesOpen ? "rotate-180" : ""}`}
+                    aria-hidden
+                  />
+                </Link>
+                {servicesOpen && (
+                  <div
+                    className="absolute top-full z-50 -mt-2 pt-2 min-w-[14rem] rounded-xl border border-border bg-background/95 shadow-xl backdrop-blur-xl dark:border-white/15 dark:bg-background/95"
+                    style={{
+                      [locale === "ar" ? "left" : "right"]: 0,
+                    }}
+                    role="menu"
+                    aria-label={t.nav.services}
+                    onMouseEnter={() => {
+                      if (servicesCloseTimeoutRef.current) {
+                        clearTimeout(servicesCloseTimeoutRef.current)
+                        servicesCloseTimeoutRef.current = null
+                      }
+                    }}
+                    onMouseLeave={() => {
+                      servicesCloseTimeoutRef.current = setTimeout(() => {
+                        servicesCloseTimeoutRef.current = null
+                        setServicesOpen(false)
+                      }, 300)
+                    }}
+                  >
+                    <div className="flex flex-col gap-px p-1.5 rounded-[10px] overflow-hidden">
+                      <Link
+                        href="/services/developpement"
+                        role="menuitem"
+                        className="rounded-[6px] px-3 py-2.5 text-left text-xs font-medium text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                        onClick={() => {
+                          if (servicesCloseTimeoutRef.current) {
+                            clearTimeout(servicesCloseTimeoutRef.current)
+                            servicesCloseTimeoutRef.current = null
+                          }
+                          setServicesOpen(false)
+                        }}
+                      >
+                        {t.nav.servicesDeveloppement}
+                      </Link>
+                      <Link
+                        href="/services/infrastructure-reseau"
+                        role="menuitem"
+                        className="rounded-[6px] px-3 py-2.5 text-left text-xs font-medium text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                        onClick={() => {
+                          if (servicesCloseTimeoutRef.current) {
+                            clearTimeout(servicesCloseTimeoutRef.current)
+                            servicesCloseTimeoutRef.current = null
+                          }
+                          setServicesOpen(false)
+                        }}
+                      >
+                        {t.nav.servicesInfrastructure}
+                      </Link>
                     </div>
                   </div>
                 )}

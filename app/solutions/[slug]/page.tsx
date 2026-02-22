@@ -37,7 +37,7 @@ export default function SolutionSlugPage() {
   const items = (t.solutionsPage as unknown as { items: SolutionsPageItem[] }).items ?? []
   const item = name ? items.find((i) => i.name === name) : null
   const backLabel = t.solutionsPage?.viewAll ?? "View all solutions"
-  const logoSrc = name ? (SOLUTION_LOGOS[name] ?? "/images/Logo.png") : ""
+  const logoSrc = name ? (SOLUTION_LOGOS[name] ?? "/images/final_logo/Logo%20(2).svg") : ""
 
   if (!name || !item) {
     return (
@@ -99,7 +99,9 @@ export default function SolutionSlugPage() {
               {backLabel}
             </Link>
             <h1 className="font-hero mt-6 max-w-4xl text-[clamp(2.5rem,5vw,5rem)] font-semibold leading-[1.02] tracking-[-0.02em] text-white">
-              {item.name}
+              {isDistrex && (t.distrexPage as { heroTitle?: string })?.heroTitle
+                ? (t.distrexPage as { heroTitle: string }).heroTitle
+                : item.name}
             </h1>
           </div>
         </div>

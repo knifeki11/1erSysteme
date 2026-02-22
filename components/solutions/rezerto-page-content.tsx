@@ -19,6 +19,7 @@ import {
   CalendarDays,
   Utensils,
   ArrowRight,
+  Check,
 } from "lucide-react"
 
 const SECTION_BG = "bg-[#fbfbfb] dark:bg-[#040404]"
@@ -71,6 +72,14 @@ type RezertoPageT = {
   targetEventVenuesDesc?: string
   targetFoodCourtsDesc?: string
   imageAltRezerto?: string
+  sectionProblemHeadline?: string
+  sectionProblemBullets?: readonly string[]
+  sectionSolutionHeadline?: string
+  sectionSolutionFeatures?: readonly string[]
+  sectionBenefitsHeadline?: string
+  sectionBenefitsStatsIntro?: string
+  sectionBenefitsOptimization?: string
+  sectionBenefitsErrors?: string
 }
 
 export function RezerToPageContent() {
@@ -79,23 +88,22 @@ export function RezerToPageContent() {
 
   return (
     <>
-      {/* 1) Operational Challenges */}
+      {/* 1) Section Problème */}
       <section className={cn("relative py-16 sm:py-24", SECTION_BG)}>
         <div className={cn("pointer-events-none absolute inset-0 -z-10", SECTION_RADIAL)} aria-hidden />
         <div className="mx-auto max-w-6xl px-6 lg:px-8">
           <h2 className="font-hero text-2xl font-semibold tracking-[-0.02em] text-foreground sm:text-3xl">
-            {r.sectionChallenges}
+            {r.sectionProblemHeadline ?? r.sectionChallenges}
           </h2>
           <div className="mt-10 grid gap-10 lg:grid-cols-2 lg:gap-16 lg:items-center">
-            <div className="space-y-5 text-base leading-relaxed text-muted-foreground">
-              <p>{r.challengesPara1}</p>
-              <p>{r.challengesPara2}</p>
-              <ul className="list-disc space-y-2 pl-5">
-                {(r.challengesBullets ?? []).map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
+            <ul className="space-y-3 text-base leading-relaxed text-muted-foreground">
+              {(r.sectionProblemBullets ?? r.challengesBullets ?? []).map((item) => (
+                <li key={item} className="flex items-start gap-3">
+                  <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-destructive/70 dark:bg-destructive/50" aria-hidden />
+                  {item}
+                </li>
+              ))}
+            </ul>
             <div className="min-h-0 w-full">
               <RezerToOperationalLossChart />
             </div>
@@ -103,22 +111,22 @@ export function RezerToPageContent() {
         </div>
       </section>
 
-      {/* 2) Solution Overview */}
+      {/* 2) Section Solution */}
       <section className={cn("relative py-16 sm:py-24", SECTION_BG)}>
         <div className={cn("pointer-events-none absolute inset-0 -z-10", SECTION_RADIAL)} aria-hidden />
         <div className="mx-auto max-w-6xl px-6 lg:px-8">
           <h2 className="font-hero text-2xl font-semibold tracking-[-0.02em] text-foreground sm:text-3xl">
-            {r.sectionOverview}
+            {r.sectionSolutionHeadline ?? r.sectionOverview}
           </h2>
           <div className="mt-10 flex flex-col gap-10 rounded-2xl border border-border/60 bg-card/50 p-6 shadow-[0_4px_24px_rgba(0,0,0,0.06)] backdrop-blur-sm dark:border-white/10 dark:bg-white/[0.04] dark:shadow-[0_4px_24px_rgba(0,0,0,0.2)] sm:p-8 lg:flex-row lg:items-center lg:gap-16">
-            <div className="min-w-0 flex-1 space-y-4 text-base leading-relaxed text-muted-foreground">
-              <p>{r.overviewPara}</p>
-              <ul className="list-disc space-y-2 pl-5">
-                {(r.overviewBullets ?? []).map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
+            <ul className="min-w-0 flex-1 space-y-3 text-base leading-relaxed text-muted-foreground">
+              {(r.sectionSolutionFeatures ?? r.overviewBullets ?? []).map((item) => (
+                <li key={item} className="flex items-center gap-3">
+                  <Check className="h-5 w-5 shrink-0 text-accent" aria-hidden />
+                  {item}
+                </li>
+              ))}
+            </ul>
             <div className="w-full shrink-0 lg:w-[22rem]">
               <div className="relative overflow-hidden rounded-xl border border-border/50 bg-muted/30 dark:border-white/10 dark:bg-white/5">
                 <Image
@@ -204,13 +212,20 @@ export function RezerToPageContent() {
         </div>
       </section>
 
-      {/* 5) Benefits & Business Impact */}
+      {/* 5) Section Avantages Business */}
       <section className={cn("relative py-16 sm:py-24", SECTION_BG)}>
         <div className={cn("pointer-events-none absolute inset-0 -z-10", SECTION_RADIAL)} aria-hidden />
         <div className="mx-auto max-w-6xl px-6 lg:px-8">
           <h2 className="font-hero text-2xl font-semibold tracking-[-0.02em] text-foreground sm:text-3xl">
-            {r.sectionBenefits}
+            {r.sectionBenefitsHeadline ?? r.sectionBenefits}
           </h2>
+          {(r.sectionBenefitsStatsIntro != null || r.sectionBenefitsOptimization != null || r.sectionBenefitsErrors != null) && (
+            <div className="mt-6 flex flex-wrap items-baseline gap-x-4 gap-y-1 text-base font-medium text-foreground">
+              {r.sectionBenefitsStatsIntro != null && <span>{r.sectionBenefitsStatsIntro}</span>}
+              {r.sectionBenefitsOptimization != null && <span className="text-accent">{r.sectionBenefitsOptimization}</span>}
+              {r.sectionBenefitsErrors != null && <span className="text-accent">{r.sectionBenefitsErrors}</span>}
+            </div>
+          )}
           <div className="mt-10 grid gap-10 lg:grid-cols-2 lg:gap-16 lg:items-center">
             <ul className="space-y-3 text-base text-muted-foreground">
               {(r.benefits ?? []).map((item) => (

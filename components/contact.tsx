@@ -86,7 +86,7 @@ export function Contact() {
           <div className="relative z-10 min-h-[520px] px-8 py-10 text-foreground sm:px-10 sm:py-12 lg:min-h-[560px] lg:px-12 lg:py-14 dark:text-white">
             <div className="flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.35em] text-foreground/70 dark:text-white/70">
               <Image
-                src="/images/Logo.png"
+                src="/images/final_logo/Logo%20(2).svg"
                 alt="1erSysteme"
                 width={48}
                 height={48}

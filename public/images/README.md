@@ -2,6 +2,8 @@
 
 Place these image files in this folder (`public/images/`) for the solution pages to display correctly.
 
+**Main 1er system logo:** `final_logo/Logo (2).svg` — used in header, footer, loading state, contact, references fallback, and product/solution fallbacks.
+
 | File | Used on |
 |------|--------|
 | **Canti1.jpg** or **Canti1.png** | CantiPOS — Solution overview & Multi-site sections |
@@ -14,9 +16,10 @@ Place these image files in this folder (`public/images/`) for the solution pages
 | **dist2.jpg** | Distrex — Stock & Logistics section |
 | **filat.jpg** | FilAtt — Clear Communication with Visitors section |
 | **filat2.jpg** | FilAtt — Built for Large Organizations section |
-| **oneT.jpg** | OneTouch — Supplier & Procurement section |
-| **oneT1.jpg** | OneTouch — Inventory & Warehouse section |
-| **oneT2.jpg** | OneTouch — Traceability & Compliance section |
+| **oneT.jpg** | OneTouch — Solution / supplier & procurement section |
+| **oneT1.jpg** | OneTouch — Inventory & Warehouse section (optional) |
+| **oneT2.jpg** | OneTouch — Traceability & Compliance section (optional) |
+| **Rezerto1.jpg** | RezerTo — Solution overview section |
 | **QuickP.jpg** | QuickPass — Online and On-Site Ticketing section |
 | **QuickP2.jpg** | QuickPass — Secure Entry Management section |
 | **QuickP3.jpg** | QuickPass — Complete Turnkey Solution section |

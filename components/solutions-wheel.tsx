@@ -291,7 +291,7 @@ export function SolutionsWheel({ eyebrow, title, items, exploreCta }: SolutionsW
             <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
               <div className="absolute inset-0 -z-10 rounded-full bg-[radial-gradient(circle,rgba(0,122,255,0.18),transparent_65%)] blur-2xl" />
               <div className="flex h-32 w-32 items-center justify-center rounded-full border border-foreground/10 bg-white/85 shadow-[0_18px_36px_rgba(0,0,0,0.12)] backdrop-blur dark:border-white/10 dark:bg-white/5">
-                <Image src="/images/Logo.png" alt="1erSysteme" width={72} height={72} className="h-16 w-16 object-contain" />
+                <Image src="/images/final_logo/Logo%20(2).svg" alt="1erSysteme" width={72} height={72} className="h-16 w-16 object-contain" />
               </div>
             </div>
           </div>

@@ -130,7 +130,7 @@ export function SolutionsSection3D({ compact, embeddable }: SolutionsSection3DPr
         name,
         description: desc,
         shortDescription: desc.length > 140 ? desc.slice(0, 140) + "…" : desc,
-        logoSrc: SOLUTION_LOGOS[name] ?? "/images/Logo.png",
+        logoSrc: SOLUTION_LOGOS[name] ?? "/images/final_logo/Logo%20(2).svg",
         tags: fromT?.tags ?? [],
       }
     })

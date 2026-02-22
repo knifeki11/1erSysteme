@@ -70,13 +70,58 @@ const LOGO_MAP: Record<string, string> = {
   SofiaPalace: "/images/SofiaPalace.png",
   Solyana: "/images/Solyana.png",
   TheCorner: "/images/TheCorner.webp",
-  TressForcas: "/images/Tress Forcas.jpeg",
+  TressForcas: "/images/TresForcas.jpg",
   Trov: "/images/Trov.jpeg",
   TuscanBistro: "/images/TuscanBistro.png",
   Wakame: "/images/Wakame.jpg",
   WeDrinks: "/images/WeDrink's.png",
   WinstonBistro: "/images/WinstonBistro.png",
   Winxo: "/images/Winxo.jpeg",
+  // New company logos (recently added)
+  HotelSaharatel: "/images/HotelSaharatel.png",
+  PlaySport: "/images/PlaySport.png",
+  EatAndMeet: "/images/EatAndMeet.jpeg",
+  Concentrix: "/images/Concentrix.jpg",
+  SkillPlay: "/images/SkillPlay.png",
+  TheBronx: "/images/TheBronx.png",
+  Duplex: "/images/Duplex.png",
+  LaKenoiserie: "/images/LaKenoiserie.png",
+  Kenoiserie: "/images/LaKenoiserie.png",
+  PainDor: "/images/PainD'or.png",
+  NourDelice: "/images/NourDelice.jpeg",
+  HalaFish: "/images/HalaFish.png",
+  AuBureau: "/images/AuBureau.jpeg",
+  RaniaShop: "/images/RaniaShop.jpeg",
+  LahlouImage: "/images/LahlouImage.jpeg",
+  BlackBall: "/images/BlackBall.jpeg",
+  BelleVue: "/images/Belle Vue.png",
+  AlijaBeauty: "/images/AlijaBeauty.jpeg",
+  ZenGarden: "/images/ZenGarden.jpeg",
+  Choose: "/images/Choose.png",
+  Verlet: "/images/Verlet.jpeg",
+  Langosta: "/images/Langosta.png",
+  Limperial: "/images/L'imperial.jpeg",
+  MHhotelLaCasa: "/images/MHhotelLaCasa.png",
+  Laamim: "/images/Laamim.png",
+  OuedNoun: "/images/OuedNoun.jpeg",
+  AllSport: "/images/AllSport.jpeg",
+  MyElegant: "/images/MyElegant.jpeg",
+  BiladCham: "/images/BiladCham.jpeg",
+  LeContinental: "/images/LeContinental.png",
+  CremeDeParis: "/images/CremeDeParis.jpeg",
+  Le580: "/images/Le580.png",
+  LaContessa: "/images/LaContessa.png",
+  Contessa: "/images/LaContessa.png",
+  LAmbreSpa: "/images/L'AmbreSpa.png",
+  LeChamonix: "/images/LeChamonix.jpeg",
+  Andalous: "/images/Andalous.png",
+  MB: "/images/MB.png",
+  HotelRif: "/images/HotelRif.png",
+  RelaisAtlantique: "/images/RelaisAtlantique.jpeg",
+  PalaisTerrab: "/images/PalaisTerrab.jpg",
+  LaDuree: "/images/LaDuree.webp",
+  Cappuccino: "/images/Cappuccino.jpeg",
+  LaCerisa: "/images/LaCerisa.jpeg",
 }
 
 /** Companies that have an actual solution — back shows solution logo; others show 1erSysteme logo only */
@@ -101,7 +146,7 @@ const SOLUTION_LOGO: Record<string, string> = {
   Filatt: "/images/Filatt.png",
 }
 
-const LOGO_1ERSYSTEME = "/images/Logo.png"
+const LOGO_1ERSYSTEME = "/images/final_logo/Logo%20(2).svg"
 
 type ReferenceCard = {
   companyKey: string
@@ -143,7 +188,7 @@ export function ReferencesFlipSection() {
         <div className="mt-12 grid gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-8">
           {cards.map((card, index) => {
             const isFlipped = hoveredIndex === index
-            const logoSrc = LOGO_MAP[card.companyKey] ?? "/images/Logo.png"
+            const logoSrc = LOGO_MAP[card.companyKey] ?? "/images/final_logo/Logo%20(2).svg"
             const isWide = card.companyKey === "WA" || card.companyKey === "WNT"
 
             return (

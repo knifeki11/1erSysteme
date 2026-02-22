@@ -132,7 +132,7 @@ function TabsHeader({
   )
 }
 
-const FALLBACK_PRODUCT_IMAGE = "/images/Logo.png"
+const FALLBACK_PRODUCT_IMAGE = "/images/final_logo/Logo%20(2).svg"
 
 type CardDisplay = { name: string; short: string; tags: string[] }
 function getCardDisplay(

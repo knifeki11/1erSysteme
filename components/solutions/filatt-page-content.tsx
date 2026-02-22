@@ -3,31 +3,50 @@
 import Link from "next/link"
 import { useI18n } from "@/lib/i18n-context"
 import { cn } from "@/lib/utils"
-import { ArrowRight } from "lucide-react"
-import { FilattProblemChart, FilattImpactChart, FilattChannelChart, FilattServedChart } from "@/components/solutions/filatt-charts"
+import { ArrowRight, Check } from "lucide-react"
+import { FilattImpactChart } from "@/components/solutions/filatt-charts"
 
 const SECTION_BG = "bg-[#fbfbfb] dark:bg-[#040404]"
 const SECTION_RADIAL = "bg-[radial-gradient(80%_60%_at_50%_0%,rgba(0,0,0,0.03),transparent_50%)] dark:bg-[radial-gradient(80%_60%_at_50%_0%,rgba(255,255,255,0.04),transparent_50%)]"
 
 type FilattPageT = {
-  sectionChallenges: string
-  sectionOverview: string
-  sectionTicketing: string
-  sectionQueue: string
-  sectionAgent: string
-  sectionDisplay: string
-  sectionAppointments: string
-  sectionAnalytics: string
-  sectionBenefits: string
-  sectionMultiSite: string
+  sectionProblem: string
+  sectionProblemBullets: readonly string[]
+  sectionProblemCallout: string
+  sectionSolution: string
+  sectionSolutionIntro: string
+  sectionSolutionBullets: readonly string[]
+  sectionSolutionClosing: string
+  sectionHow: string
+  sectionHowStep1: string
+  sectionHowStep1Desc: string
+  sectionHowStep2: string
+  sectionHowStep2Desc: string
+  sectionHowStep3: string
+  sectionHowStep3Desc: string
+  sectionHowStep4: string
+  sectionHowStep4Desc: string
+  sectionHowPhrase: string
+  sectionModules: string
+  moduleCore: string
+  moduleCoreDesc: string
+  moduleDigital: string
+  moduleDigitalDesc: string
+  moduleRdv: string
+  moduleRdvDesc: string
+  moduleAnalytics: string
+  moduleAnalyticsDesc: string
+  moduleMultiSite: string
+  moduleMultiSiteDesc: string
+  sectionRoi: string
+  sectionRoiBullets: readonly string[]
+  sectionCible: string
+  sectionCibleIntro: string
+  sectionCibleBullets: readonly string[]
   ctaHeadline: string
   ctaSubtext: string
   requestDemo: string
   contactTeam: string
-  challengesPara1?: string
-  challengesBullets?: readonly string[]
-  overviewPara?: string
-  overviewBullets?: readonly string[]
   imageAltFilat?: string
   imageAltFilat2?: string
 }
@@ -37,19 +56,20 @@ function TwoColSection({
   children,
   imageSrc,
   imageAlt,
-  rightContent,
+  imageRight = true,
 }: {
   title: string
   children: React.ReactNode
   imageSrc?: string
   imageAlt?: string
-  rightContent?: React.ReactNode
+  imageRight?: boolean
 }) {
-  const right = rightContent ?? (imageSrc && imageAlt ? (
+  const imageBlock = imageSrc && imageAlt ? (
     <div className="relative aspect-[4/3] overflow-hidden rounded-2xl border border-border/60 bg-card/40 shadow-[0_4px_24px_rgba(0,0,0,0.06)] dark:border-white/10 dark:bg-white/5 dark:shadow-[0_4px_24px_rgba(0,0,0,0.2)]">
       <img src={imageSrc} alt={imageAlt} className="h-full w-full object-cover" loading="lazy" />
     </div>
-  ) : null)
+  ) : null
+
   return (
     <section className={cn("relative py-16 sm:py-24", SECTION_BG)}>
       <div className={cn("pointer-events-none absolute inset-0 -z-10", SECTION_RADIAL)} aria-hidden />
@@ -58,26 +78,20 @@ function TwoColSection({
           {title}
         </h2>
         <div className="mt-10 grid gap-10 lg:grid-cols-2 lg:gap-16 lg:items-center">
-          <div className="space-y-4 text-base leading-relaxed text-muted-foreground">
-            {children}
-          </div>
-          {right && <div className="min-h-0 w-full">{right}</div>}
+          {imageRight ? (
+            <>
+              <div className="space-y-4 text-base leading-relaxed text-muted-foreground">{children}</div>
+              {imageBlock && <div className="min-h-0 w-full">{imageBlock}</div>}
+            </>
+          ) : (
+            <>
+              {imageBlock && <div className="min-h-0 w-full">{imageBlock}</div>}
+              <div className="space-y-4 text-base leading-relaxed text-muted-foreground">{children}</div>
+            </>
+          )}
         </div>
       </div>
     </section>
-  )
-}
-
-function BulletList({ items }: { items: string[] }) {
-  return (
-    <ul className="space-y-2 text-muted-foreground">
-      {items.map((item) => (
-        <li key={item} className="flex items-center gap-3">
-          <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-accent" aria-hidden />
-          {item}
-        </li>
-      ))}
-    </ul>
   )
 }
 
@@ -87,185 +101,159 @@ export function FilattPageContent() {
 
   return (
     <>
-      {/* 1) Public Service Challenges */}
-      <TwoColSection title={s.sectionChallenges} rightContent={<FilattProblemChart />}>
-        <p>{s.challengesPara1}</p>
-        <ul className="list-disc space-y-2 pl-5">
-          {(s.challengesBullets ?? []).map((item) => (
-            <li key={item}>{item}</li>
-          ))}
-        </ul>
-      </TwoColSection>
-
-      {/* 2) FilAtt Overview */}
+      {/* 1) Section Problème */}
       <section className={cn("relative py-16 sm:py-24", SECTION_BG)}>
         <div className={cn("pointer-events-none absolute inset-0 -z-10", SECTION_RADIAL)} aria-hidden />
         <div className="mx-auto max-w-6xl px-6 lg:px-8">
           <h2 className="font-hero text-2xl font-semibold tracking-[-0.02em] text-foreground sm:text-3xl">
-            {s.sectionOverview}
+            {s.sectionProblem}
           </h2>
-          <div className="mt-10 flex flex-col gap-10 rounded-2xl border border-border/60 bg-card/50 p-6 shadow-[0_4px_24px_rgba(0,0,0,0.06)] backdrop-blur-sm dark:border-white/10 dark:bg-white/[0.04] dark:shadow-[0_4px_24px_rgba(0,0,0,0.2)] sm:p-8 lg:flex-row lg:items-center lg:gap-16">
-            <div className="min-w-0 flex-1 space-y-4 text-base leading-relaxed text-muted-foreground">
-              <p>{s.overviewPara}</p>
-              <ul className="list-disc space-y-2 pl-5">
-                {(s.overviewBullets ?? []).map((item) => (
-                  <li key={item}>{item}</li>
+          <div className="mt-10 grid gap-10 lg:grid-cols-2 lg:gap-16 lg:items-start">
+            <div className="space-y-4">
+              <ul className="list-none space-y-2 pl-0 text-muted-foreground">
+                {(s.sectionProblemBullets ?? []).map((item) => (
+                  <li key={item} className="flex items-start gap-3">
+                    <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" aria-hidden />
+                    {item}
+                  </li>
                 ))}
               </ul>
             </div>
-            <div className="w-full shrink-0 lg:w-80">
-              <FilattChannelChart />
+            <div className="rounded-2xl border border-primary/20 bg-primary/5 p-6 dark:border-primary/30 dark:bg-primary/10">
+              <p className="text-base font-medium leading-relaxed text-foreground">
+                {s.sectionProblemCallout}
+              </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 3) Hybrid Ticketing */}
+      {/* 2) Section Solution */}
       <TwoColSection
-        title={s.sectionTicketing}
-        imageSrc="https://images.unsplash.com/photo-1556740749-887f6717d7e4?w=800&q=80"
-        imageAlt="Ticket kiosk or scanning"
-      >
-        <p>
-          FilAtt supports both paper and digital flows so every visitor is included. Printed tickets from kiosks and QR-code digital tickets are synchronized in real time, with unique ticket numbers and estimated waiting time display.
-        </p>
-        <BulletList
-          items={[
-            "Printed tickets from kiosks",
-            "QR-code digital tickets",
-            "Web or mobile access",
-            "Unique ticket numbers",
-            "Real-time synchronization",
-            "Support for non-digital users",
-            "Estimated waiting time display",
-          ]}
-        />
-      </TwoColSection>
-
-      {/* 4) Queue Engine */}
-      <TwoColSection
-        title={s.sectionQueue}
-        imageSrc="https://images.unsplash.com/photo-1552664730-d307ca884978?w=800&q=80"
-        imageAlt="Operations or planning environment"
-      >
-        <BulletList
-          items={[
-            "FIFO and priority queues",
-            "VIP handling",
-            "Emergency cases",
-            "Dynamic waiting time calculation",
-            "Agent skill-based routing",
-            "Automatic redirection",
-            "Handling of no-shows",
-          ]}
-        />
-      </TwoColSection>
-
-      {/* 5) Agent Interface */}
-      <TwoColSection
-        title={s.sectionAgent}
-        imageSrc="https://images.unsplash.com/photo-1553877522-43269d4ea984?w=800&q=80"
-        imageAlt="Professional working at desk"
-      >
-        <BulletList
-          items={[
-            "Secure login",
-            "Call next client",
-            "View service details",
-            "Transfer tickets",
-            "Pause/resume service",
-            "Close requests",
-            "Real-time workload view",
-          ]}
-        />
-      </TwoColSection>
-
-      {/* 6) Display & Notifications */}
-      <TwoColSection
-        title={s.sectionDisplay}
+        title={s.sectionSolution}
         imageSrc="/images/filat.jpg"
-        imageAlt={s.imageAltFilat ?? "FilAtt visitor display and communication"}
+        imageAlt={s.imageAltFilat ?? "FilAtt — gestion des files d'attente"}
+        imageRight={true}
       >
-        <BulletList
-          items={[
-            "Public display screens",
-            "Ticket numbers called",
-            "Counter identification",
-            "Audio notifications",
-            "Informational messages",
-            "Promotional content capability",
-            "Reduced confusion and stress",
-          ]}
-        />
+        <p>{s.sectionSolutionIntro}</p>
+        <ul className="list-none space-y-2 pl-0">
+          {(s.sectionSolutionBullets ?? []).map((item) => (
+            <li key={item} className="flex items-start gap-3">
+              <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" aria-hidden />
+              {item}
+            </li>
+          ))}
+        </ul>
+        <p className="pt-2 font-medium text-foreground">{s.sectionSolutionClosing}</p>
       </TwoColSection>
 
-      {/* 7) Appointment Management */}
+      {/* 3) Section Comment ça marche */}
       <TwoColSection
-        title={s.sectionAppointments}
-        imageSrc="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&q=80"
-        imageAlt="Calendar or booking scenario"
-      >
-        <BulletList
-          items={[
-            "Online appointment booking",
-            "Service selection",
-            "Time slot allocation",
-            "Confirmation messages",
-            "Reminder notifications",
-            "Integration into queue on arrival",
-            "Reduced congestion",
-          ]}
-        />
-      </TwoColSection>
-
-      {/* 8) Analytics & Decision Support */}
-      <TwoColSection title={s.sectionAnalytics} rightContent={<FilattServedChart />}>
-        <BulletList
-          items={[
-            "Real-time dashboards",
-            "Visitor volume trends",
-            "Peak hours analysis",
-            "Waiting time statistics",
-            "Agent performance metrics",
-            "Channel usage (paper vs digital)",
-            "Service optimization insights",
-          ]}
-        />
-      </TwoColSection>
-
-      {/* 9) Multi-site & Security */}
-      <TwoColSection
-        title={s.sectionMultiSite}
+        title={s.sectionHow}
         imageSrc="/images/filat2.jpg"
-        imageAlt={s.imageAltFilat2 ?? "FilAtt for large organizations"}
+        imageAlt={s.imageAltFilat2 ?? "FilAtt — flux et affichage"}
+        imageRight={false}
       >
-        <BulletList
-          items={[
-            "Multi-agency deployment",
-            "Centralized administration",
-            "Role-based access control",
-            "Data security & compliance",
-            "Audit logs",
-            "Integration capabilities",
-            "High availability architecture",
-          ]}
-        />
+        <div className="space-y-6">
+          <div>
+            <p className="font-medium text-foreground">{s.sectionHowStep1}</p>
+            <p className="mt-0.5 text-sm text-muted-foreground">{s.sectionHowStep1Desc}</p>
+          </div>
+          <div>
+            <p className="font-medium text-foreground">{s.sectionHowStep2}</p>
+            <p className="mt-0.5 text-sm text-muted-foreground">{s.sectionHowStep2Desc}</p>
+          </div>
+          <div>
+            <p className="font-medium text-foreground">{s.sectionHowStep3}</p>
+            <p className="mt-0.5 text-sm text-muted-foreground">{s.sectionHowStep3Desc}</p>
+          </div>
+          <div>
+            <p className="font-medium text-foreground">{s.sectionHowStep4}</p>
+            <p className="mt-0.5 text-sm text-muted-foreground">{s.sectionHowStep4Desc}</p>
+          </div>
+        </div>
+        <p className="mt-6 border-l-2 border-primary pl-4 font-medium italic text-foreground">
+          {s.sectionHowPhrase}
+        </p>
       </TwoColSection>
 
-      {/* 10) Business Impact */}
+      {/* 4) Section Modules */}
       <section className={cn("relative py-16 sm:py-24", SECTION_BG)}>
         <div className={cn("pointer-events-none absolute inset-0 -z-10", SECTION_RADIAL)} aria-hidden />
         <div className="mx-auto max-w-6xl px-6 lg:px-8">
           <h2 className="font-hero text-2xl font-semibold tracking-[-0.02em] text-foreground sm:text-3xl">
-            {s.sectionBenefits}
+            {s.sectionModules}
           </h2>
-          <div className="mt-10 w-full">
-            <FilattImpactChart />
+          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="rounded-xl border border-border/60 bg-card/50 p-5 shadow-[0_2px_12px_rgba(0,0,0,0.04)] dark:border-white/10 dark:bg-white/[0.04]">
+              <h3 className="font-semibold text-foreground">{s.moduleCore}</h3>
+              <p className="mt-1.5 text-sm text-muted-foreground">{s.moduleCoreDesc}</p>
+            </div>
+            <div className="rounded-xl border border-border/60 bg-card/50 p-5 shadow-[0_2px_12px_rgba(0,0,0,0.04)] dark:border-white/10 dark:bg-white/[0.04]">
+              <h3 className="font-semibold text-foreground">{s.moduleDigital}</h3>
+              <p className="mt-1.5 text-sm text-muted-foreground">{s.moduleDigitalDesc}</p>
+            </div>
+            <div className="rounded-xl border border-border/60 bg-card/50 p-5 shadow-[0_2px_12px_rgba(0,0,0,0.04)] dark:border-white/10 dark:bg-white/[0.04]">
+              <h3 className="font-semibold text-foreground">{s.moduleRdv}</h3>
+              <p className="mt-1.5 text-sm text-muted-foreground">{s.moduleRdvDesc}</p>
+            </div>
+            <div className="rounded-xl border border-border/60 bg-card/50 p-5 shadow-[0_2px_12px_rgba(0,0,0,0.04)] dark:border-white/10 dark:bg-white/[0.04]">
+              <h3 className="font-semibold text-foreground">{s.moduleAnalytics}</h3>
+              <p className="mt-1.5 text-sm text-muted-foreground">{s.moduleAnalyticsDesc}</p>
+            </div>
+            <div className="rounded-xl border border-border/60 bg-card/50 p-5 shadow-[0_2px_12px_rgba(0,0,0,0.04)] dark:border-white/10 dark:bg-white/[0.04] sm:col-span-2 lg:col-span-1">
+              <h3 className="font-semibold text-foreground">{s.moduleMultiSite}</h3>
+              <p className="mt-1.5 text-sm text-muted-foreground">{s.moduleMultiSiteDesc}</p>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* 11) Call To Action */}
+      {/* 5) Section ROI + Impact chart */}
+      <section className={cn("relative py-16 sm:py-24", SECTION_BG)}>
+        <div className={cn("pointer-events-none absolute inset-0 -z-10", SECTION_RADIAL)} aria-hidden />
+        <div className="mx-auto max-w-6xl px-6 lg:px-8">
+          <h2 className="font-hero text-2xl font-semibold tracking-[-0.02em] text-foreground sm:text-3xl">
+            {s.sectionRoi}
+          </h2>
+          <div className="mt-10 grid gap-10 lg:grid-cols-2 lg:gap-16 lg:items-start">
+            <ul className="list-none space-y-3 pl-0 text-muted-foreground">
+              {(s.sectionRoiBullets ?? []).map((item) => (
+                <li key={item} className="flex items-start gap-3">
+                  <Check className="mt-0.5 h-5 w-5 shrink-0 text-primary" aria-hidden />
+                  {item}
+                </li>
+              ))}
+            </ul>
+            <div className="w-full">
+              <FilattImpactChart />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 6) Section Cible */}
+      <section className={cn("relative py-16 sm:py-24", SECTION_BG)}>
+        <div className={cn("pointer-events-none absolute inset-0 -z-10", SECTION_RADIAL)} aria-hidden />
+        <div className="mx-auto max-w-6xl px-6 lg:px-8">
+          <h2 className="font-hero text-2xl font-semibold tracking-[-0.02em] text-foreground sm:text-3xl">
+            {s.sectionCible}
+          </h2>
+          {s.sectionCibleIntro && <p className="mt-4 text-base leading-relaxed text-muted-foreground">{s.sectionCibleIntro}</p>}
+          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {(s.sectionCibleBullets ?? []).map((item) => (
+              <div
+                key={item}
+                className="rounded-xl border border-border/60 bg-card/50 p-4 shadow-[0_2px_12px_rgba(0,0,0,0.04)] dark:border-white/10 dark:bg-white/[0.04]"
+              >
+                <p className="font-medium text-foreground">{item}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 7) CTA */}
       <section className="relative overflow-hidden py-20 sm:py-28">
         <div
           className="absolute inset-0 -z-10"
